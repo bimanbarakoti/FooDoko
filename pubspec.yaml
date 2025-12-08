@@ -1,0 +1,57 @@
+name: foodoko
+description: A production-ready food discovery and ordering Flutter app
+version: 1.0.0+1
+publish_to: "none"
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # State management
+  flutter_riverpod: ^2.3.6
+
+  # Navigation
+  go_router: ^6.5.0   # downgraded to match Flutter SDK
+
+  # UI & animations
+  google_fonts: ^4.0.3
+  glassmorphism: ^3.0.0
+  lottie: ^2.3.0
+  flutter_svg: ^2.0.7
+
+  # Networking
+  dio: ^5.2.1   # compatible
+  http: ^1.2.3
+
+  # Location & permissions
+  geolocator: ^9.0.2  # compatible
+  permission_handler: ^12.0.1
+
+  # Local storage
+  shared_preferences: ^2.2.0
+
+  # Misc
+  intl: ^0.18.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.1
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/
+    - assets/icons/
+    - assets/lottie/
+
+  fonts:
+    - family: Poppins
+      fonts:
+        - asset: assets/fonts/Poppins-Regular.ttf
+        - asset: assets/fonts/Poppins-Bold.ttf
+        - asset: assets/fonts/Poppins-SemiBold.ttf
