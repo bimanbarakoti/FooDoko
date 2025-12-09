@@ -52,5 +52,5 @@ It follows **Clean Architecture**, a **scalable folder structure**, and uses **R
 
 ---
 
-## 📂 **Project Structure**
+
 
