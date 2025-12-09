@@ -1,16 +1,56 @@
-# foo_doko
+# 🍔 **Foodoko – Food & Grocery Delivery App**
+*A modern, stylish, multi-service delivery app built with Flutter.*
 
-A new Flutter project.
+<p align="center">
+  <img src="https://img.shields.io/badge/Flutter-3.24-blue?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/State%20Management-Riverpod-purple?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/Router-GoRouter-green?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/Platform-Android%20%7C%20iOS-orange?style=for-the-badge" />
+</p>
 
-## Getting Started
+---
 
-This project is a starting point for a Flutter application.
+## ✨ **Overview**
+**Foodoko** is a beautifully designed Flutter application for ordering **food, groceries, and packaged items**.  
+It follows **Clean Architecture**, a **scalable folder structure**, and uses **Riverpod + GoRouter** for clean, maintainable code.
 
-A few resources to get you started if this is your first Flutter project:
+---
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## 🔥 **Features**
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### 🔐 **Authentication**
+- Splash screen  
+- Login / Register  
+- Smooth navigation  
+
+### 🏠 **Home**
+- Category browsing  
+- Popular restaurants  
+- Smart search  
+- Modern dark UI  
+
+### 🍽 **Restaurant**
+- Dynamic menu sections  
+- Item customizations  
+- Toppings, size selections  
+- Add to cart  
+
+### 🛒 **Cart**
+- Update quantities  
+- Remove items  
+- Auto total calculation  
+
+### 💳 **Checkout**
+- Delivery info (WIP)  
+- Promo code (WIP)  
+- Map location selection (WIP)  
+- Proceed to payment  
+
+### 🧾 **Payment**
+- Payment method selection  
+- Khalti coming soon  
+
+---
+
+## 📂 **Project Structure**
+
