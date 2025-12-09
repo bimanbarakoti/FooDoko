@@ -53,4 +53,16 @@ It follows **Clean Architecture**, a **scalable folder structure**, and uses **R
 ---
 
 
+🛠 Future Upgrades
 
+🔐 JWT authentication
+
+🗺 Address selection with Google Maps
+
+🚗 Live driver tracking
+
+💳 Khalti + eSewa integration
+
+🧾 Order history
+
+🔔 Push notifications
