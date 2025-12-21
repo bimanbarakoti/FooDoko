@@ -1,260 +1,275 @@
 // lib/features/auth/views/login_screen.dart
-
-import 'dart:ui';
+import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../app/widgets/glass/frosted_container.dart';
+import 'package:foodoko/app/widgets/buttons/input_field.dart';
+import 'package:foodoko/app/widgets/buttons/primary_button.dart';
+import '../providers/auth_providers.dart';
 import 'package:go_router/go_router.dart';
-import 'package:flutter/services.dart';
 import 'package:foodoko/app/config/app_colors.dart';
 
-
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  ConsumerState<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen>
-    with SingleTickerProviderStateMixin {
-  double intensity = 0.45;
-  double mood = 0.5;
-  double sweetSavory = 0.5;
-
-  late AnimationController _heatController;
-  bool _showHeat = false;
+class _LoginScreenState extends ConsumerState<LoginScreen>
+    with TickerProviderStateMixin {
+  final emailController = TextEditingController();
+  final passwordController = TextEditingController();
+  
+  late AnimationController _bgController;
+  late AnimationController _pulseController;
+  late Animation<double> _pulse;
+  
+  // Floating particles
+  final List<_Particle> particles = [];
 
   @override
   void initState() {
     super.initState();
-    _heatController = AnimationController(
+    
+    // Init particles
+    for (int i = 0; i < 15; i++) {
+      particles.add(_Particle.random());
+    }
+    
+    _bgController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 700),
-    );
+      duration: const Duration(seconds: 6),
+    )..repeat(reverse: true);
+    
+    _pulseController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 2),
+    )..repeat(reverse: true);
+    _pulse = CurvedAnimation(parent: _pulseController, curve: Curves.easeInOut);
   }
 
   @override
   void dispose() {
-    _heatController.dispose();
+    emailController.dispose();
+    passwordController.dispose();
+    _bgController.dispose();
+    _pulseController.dispose();
     super.dispose();
   }
 
-  Future<void> _onThumbLogin() async {
-    setState(() => _showHeat = true);
-    _heatController.forward(from: 0);
-    HapticFeedback.mediumImpact();
+  Future<void> _attemptLogin() async {
+    final email = emailController.text.trim();
+    final password = passwordController.text;
+    final notifier = ref.read(authNotifierProvider.notifier);
 
-    await Future.delayed(const Duration(milliseconds: 900));
+    if (email.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please fill all fields')));
+      return;
+    }
 
-    _heatController.reverse();
-    setState(() => _showHeat = false);
-
-    context.go('/home');
+    final success = await notifier.login(email, password);
+    final state = ref.read(authNotifierProvider);
+    if (success) {
+      // navigate to home
+      context.go('/home');
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(state.error ?? 'Login failed')));
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final keyboard = MediaQuery.of(context).viewInsets.bottom;
+    final authState = ref.watch(authNotifierProvider);
 
     return Scaffold(
       backgroundColor: AppColors.deepMidnight,
-      body: Stack(
-        children: [
-          /// Background Image
-          Positioned.fill(
-            child: Image.asset(
-              'assets/images/forest_bg.jpg',
-              fit: BoxFit.cover,
-            ),
-          ),
-
-          /// Dynamic Blur Layer
-          Positioned.fill(
-            child: BackdropFilter(
-              filter: ImageFilter.blur(
-                sigmaX: 6 + 20 * intensity,
-                sigmaY: 6 + 20 * intensity,
-              ),
-              child: Container(
-                color: Colors.black.withOpacity(
-                  0.28 * (1 - (0.5 + 0.5 * mood)),
-                ),
-              ),
-            ),
-          ),
-
-          /// UI Content
-          SafeArea(
-            child: SingleChildScrollView(
-              reverse: true,
-              padding: EdgeInsets.only(bottom: keyboard + 20, top: 20),
-              child: Column(
-                children: [
-                  const SizedBox(height: 24),
-
-                  Text(
-                    'Palate Calibration',
-                    style: GoogleFonts.poppins(
-                      fontSize: 22,
-                      fontWeight: FontWeight.w700,
-                      color: Colors.white,
-                    ),
-                  ),
-
-                  const SizedBox(height: 18),
-
-                  _buildSlider(
-                    'Intensity',
-                    'Whisper',
-                    'Roar',
-                    intensity,
-                        (v) => setState(() => intensity = v),
-                  ),
-
-                  const SizedBox(height: 12),
-
-                  _buildSlider(
-                    'Mood',
-                    'Wanderlust',
-                    'Nostalgia',
-                    mood,
-                        (v) => setState(() => mood = v),
-                  ),
-
-                  const SizedBox(height: 12),
-
-                  _buildSlider(
-                    'Sweet/Savory',
-                    'Dusk',
-                    'Dawn',
-                    sweetSavory,
-                        (v) => setState(() => sweetSavory = v),
-                  ),
-
-                  const SizedBox(height: 24),
-
-                  /// Fingerprint Login
-                  GestureDetector(
-                    onTap: _onThumbLogin,
-                    child: Stack(
-                      alignment: Alignment.center,
+      body: AnimatedBuilder(
+        animation: _bgController,
+        builder: (context, child) {
+          return Stack(
+            children: [
+              _animatedBackground(),
+              _particleLayer(),
+              SafeArea(
+                child: Center(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
                       children: [
+                        _logoPulse(),
+                        const SizedBox(height: 20),
+                        Text('Welcome Back', 
+                          style: GoogleFonts.poppins(
+                            fontSize: 28, 
+                            fontWeight: FontWeight.w700, 
+                            color: Colors.white
+                          )
+                        ),
+                        const SizedBox(height: 8),
+                        Text('Sign in to continue', 
+                          style: GoogleFonts.inter(color: Colors.white70)
+                        ),
+                        const SizedBox(height: 28),
+
                         FrostedContainer(
-                          blur: 10,
-                          padding: const EdgeInsets.all(26),
-                          borderRadius: BorderRadius.circular(32),
-                          child: Icon(
-                            Icons.fingerprint,
-                            size: 64,
-                            color: AppColors.electricGreen,
+                          blur: 8,
+                          borderRadius: BorderRadius.circular(16),
+                          padding: const EdgeInsets.all(18),
+                          child: Column(
+                            children: [
+                              InputField(
+                                controller: emailController, 
+                                hint: 'Email', 
+                                icon: Icons.email_outlined, 
+                                keyboardType: TextInputType.emailAddress
+                              ),
+                              const SizedBox(height: 12),
+                              InputField(
+                                controller: passwordController, 
+                                hint: 'Password', 
+                                icon: Icons.lock_outline, 
+                                obscure: true
+                              ),
+                              const SizedBox(height: 12),
+                              Align(
+                                alignment: Alignment.centerRight,
+                                child: TextButton(
+                                  onPressed: () => context.push('/forgot-password'),
+                                  child: Text('Forgot password?', 
+                                    style: TextStyle(color: AppColors.electricGreen)
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              PrimaryButton(
+                                label: 'Login',
+                                loading: authState.loading,
+                                onPressed: _attemptLogin,
+                              ),
+                            ],
                           ),
                         ),
 
-                        if (_showHeat)
-                          Positioned.fill(
-                            child: AnimatedBuilder(
-                              animation: _heatController,
-                              builder: (_, __) {
-                                return Container(
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    gradient: RadialGradient(
-                                      colors: [
-                                        AppColors.electricGreen
-                                            .withOpacity(0.4 *
-                                            _heatController.value),
-                                        Colors.transparent
-                                      ],
-                                    ),
-                                  ),
-                                );
-                              },
+                        const SizedBox(height: 18),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text("Don't have an account?", 
+                              style: GoogleFonts.inter(color: Colors.white70)
                             ),
-                          ),
+                            TextButton(
+                              onPressed: () => context.push('/signup'), 
+                              child: Text('Sign Up', 
+                                style: TextStyle(color: AppColors.electricGreen)
+                              )
+                            ),
+                          ],
+                        ),
                       ],
                     ),
                   ),
-
-                  const SizedBox(height: 12),
-
-                  TextButton(
-                    onPressed: () => context.push('/signup'),
-                    child: Text(
-                      'Sign in with OTP',
-                      style: TextStyle(
-                        color: AppColors.electricGreen,
-                      ),
-                    ),
-                  ),
-
-                  const SizedBox(height: 24),
-                ],
-              ),
-            ),
-          ),
-        ],
+                ),
+              )
+            ],
+          );
+        },
       ),
     );
   }
-
-  Widget _buildSlider(
-      String label,
-      String start,
-      String end,
-      double value,
-      ValueChanged<double> onChanged,
-      ) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 18),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                label,
-                style: GoogleFonts.poppins(
-                  color: Colors.white,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              Text(
-                '${(value * 100).round()}%',
-                style: GoogleFonts.inter(color: Colors.white70),
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 8),
-
-          Row(
-            children: [
-              Text(start,
-                  style: GoogleFonts.inter(
-                      color: Colors.white70, fontSize: 12)),
-              const SizedBox(width: 8),
-
-              Expanded(
-                child: SliderTheme(
-                  data: SliderTheme.of(context).copyWith(
-                    trackHeight: 4,
-                    activeTrackColor: AppColors.electricGreen,
-                    thumbColor: AppColors.electricGreen,
-                    inactiveTrackColor: Colors.white24,
-                  ),
-                  child: Slider(value: value, onChanged: onChanged),
-                ),
-              ),
-
-              const SizedBox(width: 8),
-              Text(end,
-                  style: GoogleFonts.inter(
-                      color: Colors.white70, fontSize: 12)),
-            ],
-          )
-        ],
+  
+  // Same background as splash screen
+  Widget _animatedBackground() {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            AppColors.deepMidnight,
+            AppColors.deepMidnight.withOpacity(0.8),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
       ),
     );
+  }
+  
+  // Floating particles like splash screen
+  Widget _particleLayer() {
+    return AnimatedBuilder(
+      animation: _bgController,
+      builder: (context, _) {
+        return Stack(
+          children: particles.map((p) {
+            p.update();
+            return Positioned(
+              left: p.x,
+              top: p.y,
+              child: Container(
+                width: p.size,
+                height: p.size,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: Colors.white.withOpacity(p.opacity),
+                ),
+              ),
+            );
+          }).toList(),
+        );
+      },
+    );
+  }
+  
+  // Logo with pulse effect
+  Widget _logoPulse() {
+    return AnimatedBuilder(
+      animation: _pulse,
+      builder: (_, __) {
+        return Container(
+          width: 80 + 8 * _pulse.value,
+          height: 80 + 8 * _pulse.value,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: AppColors.primaryGradient,
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.shadow.withOpacity(0.3 + 0.2 * _pulse.value),
+                blurRadius: 30 + 8 * _pulse.value,
+                spreadRadius: 3 + 2 * _pulse.value,
+              )
+            ],
+          ),
+          child: const Icon(Icons.fastfood_rounded,
+              size: 35, color: Colors.white),
+        );
+      },
+    );
+  }
+}
+
+// Particle class for floating animation
+class _Particle {
+  double x = 0;
+  double y = 0;
+  double speed = 0.5;
+  double size = 2;
+  double opacity = 0.4;
+
+  _Particle.random() {
+    final rand = Random();
+    x = rand.nextDouble() * 400;
+    y = rand.nextDouble() * 800;
+    speed = 0.4 + rand.nextDouble() * 1.2;
+    size = 2 + rand.nextDouble() * 3;
+    opacity = 0.2 + rand.nextDouble() * 0.5;
+  }
+
+  void update() {
+    y -= speed;
+    if (y < -10) {
+      y = 820;
+    }
   }
 }

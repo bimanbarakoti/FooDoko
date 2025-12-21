@@ -17,92 +17,266 @@ class CartScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: AppColors.deepMidnight,
       appBar: AppBar(
-        title: Text("Your Cart", style: GoogleFonts.poppins()),
+        title: Text("Your Cart", style: GoogleFonts.poppins(color: Colors.white)),
         backgroundColor: AppColors.deepMidnight,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => context.pop(),
+        ),
+        actions: [
+          if (cartItems.isNotEmpty)
+            TextButton(
+              onPressed: () {
+                ref.read(cartNotifierProvider.notifier).clearCart();
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Cart cleared'),
+                    backgroundColor: AppColors.surfaceDark,
+                  ),
+                );
+              },
+              child: Text(
+                'Clear All',
+                style: GoogleFonts.inter(color: AppColors.electricGreen),
+              ),
+            ),
+        ],
       ),
       body: cartItems.isEmpty
           ? Center(
-        child: Text(
-          "Your cart is empty",
-          style: GoogleFonts.poppins(color: Colors.white),
-        ),
-      )
-          : ListView.builder(
-        itemCount: cartItems.length,
-        itemBuilder: (context, index) {
-          final item = cartItems[index];
-
-          return Card(
-            color: Colors.white12,
-            margin: const EdgeInsets.all(10),
-            child: ListTile(
-              leading: Image.network(
-                item.item.imageUrl,
-                height: 60,
-                width: 60,
-                fit: BoxFit.cover,
-              ),
-              title: Text(
-                item.item.name,
-                style: GoogleFonts.poppins(color: Colors.white),
-              ),
-              subtitle: Text(
-                "\$${item.item.price.toStringAsFixed(2)}",
-                style: GoogleFonts.inter(color: Colors.white70),
-              ),
-              trailing: Row(
-                mainAxisSize: MainAxisSize.min,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  IconButton(
-                    icon: const Icon(Icons.remove, color: Colors.white),
-                    onPressed: () =>
-                        ref.read(cartProvider.notifier).decreaseQuantity(item),
+                  Icon(
+                    Icons.shopping_cart_outlined,
+                    size: 80,
+                    color: Colors.white.withOpacity(0.3),
                   ),
+                  const SizedBox(height: 16),
                   Text(
-                    item.quantity.toString(),
-                    style: GoogleFonts.poppins(color: Colors.white),
+                    "Your cart is empty",
+                    style: GoogleFonts.poppins(
+                      color: Colors.white,
+                      fontSize: 18,
+                    ),
                   ),
-                  IconButton(
-                    icon: const Icon(Icons.add, color: Colors.white),
-                    onPressed: () =>
-                        ref.read(cartProvider.notifier).addToCart(item.item),
+                  const SizedBox(height: 8),
+                  Text(
+                    "Add some delicious items to get started",
+                    style: GoogleFonts.inter(
+                      color: Colors.white70,
+                      fontSize: 14,
+                    ),
                   ),
-                  IconButton(
-                    icon: const Icon(Icons.delete, color: Colors.red),
-                    onPressed: () =>
-                        ref.read(cartProvider.notifier).remove(item),
+                  const SizedBox(height: 24),
+                  ElevatedButton(
+                    onPressed: () => context.go('/home'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.electricGreen,
+                      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                    ),
+                    child: Text(
+                      'Browse Restaurants',
+                      style: GoogleFonts.poppins(color: Colors.black),
+                    ),
                   ),
                 ],
               ),
+            )
+          : ListView.builder(
+              padding: const EdgeInsets.all(16),
+              itemCount: cartItems.length,
+              itemBuilder: (context, index) {
+                final item = cartItems[index];
+
+                return Container(
+                  margin: const EdgeInsets.only(bottom: 12),
+                  child: Card(
+                    color: Colors.white.withOpacity(0.1),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(12),
+                      child: Row(
+                        children: [
+                          // Item image
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: Image.network(
+                              item.item.imageUrl,
+                              height: 80,
+                              width: 80,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return Container(
+                                  height: 80,
+                                  width: 80,
+                                  color: Colors.grey,
+                                  child: const Icon(Icons.fastfood, color: Colors.white),
+                                );
+                              },
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          
+                          // Item details
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  item.item.name,
+                                  style: GoogleFonts.poppins(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  "\$${item.item.price.toStringAsFixed(2)} each",
+                                  style: GoogleFonts.inter(
+                                    color: Colors.white70,
+                                    fontSize: 12,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  "Total: \$${item.totalPrice.toStringAsFixed(2)}",
+                                  style: GoogleFonts.poppins(
+                                    color: AppColors.electricGreen,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          
+                          // Quantity controls
+                          Column(
+                            children: [
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.white.withOpacity(0.1),
+                                      borderRadius: BorderRadius.circular(6),
+                                    ),
+                                    child: IconButton(
+                                      icon: const Icon(Icons.remove, color: Colors.white, size: 16),
+                                      onPressed: () => ref.read(cartNotifierProvider.notifier).decreaseQuantity(item),
+                                      constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                                    ),
+                                  ),
+                                  Container(
+                                    margin: const EdgeInsets.symmetric(horizontal: 12),
+                                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                    decoration: BoxDecoration(
+                                      color: AppColors.electricGreen,
+                                      borderRadius: BorderRadius.circular(6),
+                                    ),
+                                    child: Text(
+                                      item.quantity.toString(),
+                                      style: GoogleFonts.poppins(
+                                        color: Colors.black,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.white.withOpacity(0.1),
+                                      borderRadius: BorderRadius.circular(6),
+                                    ),
+                                    child: IconButton(
+                                      icon: const Icon(Icons.add, color: Colors.white, size: 16),
+                                      onPressed: () => ref.read(cartNotifierProvider.notifier).addToCart(item.item),
+                                      constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              IconButton(
+                                icon: const Icon(Icons.delete_outline, color: Colors.red, size: 20),
+                                onPressed: () => ref.read(cartNotifierProvider.notifier).remove(item),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
             ),
-          );
-        },
-      ),
       bottomNavigationBar: cartItems.isEmpty
           ? null
           : Container(
-        padding: const EdgeInsets.all(20),
-        decoration: const BoxDecoration(color: Colors.white12),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              "Total: \$${total.toStringAsFixed(2)}",
-              style: GoogleFonts.poppins(
-                fontSize: 20,
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: AppColors.surfaceDark,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 10,
+                    offset: const Offset(0, -5),
+                  ),
+                ],
+              ),
+              child: SafeArea(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Total Amount",
+                              style: GoogleFonts.inter(
+                                color: Colors.white70,
+                                fontSize: 12,
+                              ),
+                            ),
+                            Text(
+                              "\$${total.toStringAsFixed(2)}",
+                              style: GoogleFonts.poppins(
+                                fontSize: 24,
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                        ElevatedButton(
+                          onPressed: () => context.push('/payment'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.electricGreen,
+                            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                          ),
+                          child: Text(
+                            "Proceed to Pay",
+                            style: GoogleFonts.poppins(
+                              color: Colors.black,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
-            ElevatedButton(
-              onPressed: () {
-                context.go('/payment');
-              },
-              child: const Text("Checkout"),
-            )
-          ],
-        ),
-      ),
     );
   }
 }

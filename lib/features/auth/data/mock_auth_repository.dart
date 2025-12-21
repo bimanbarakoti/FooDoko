@@ -1,37 +1,42 @@
-// lib/features/auth/data/mock_auth_repository.dart
+// lib/features/auth/repository/auth_repository.dart
+
 import 'dart:async';
-import 'package:foodoko/features/auth/data/models/user_model.dart';
 
-class MockAuthRepository {
-  // fake logged-in user
-  UserModel? _user;
 
-  Future<UserModel?> getCurrentUser() async {
-    await Future.delayed(const Duration(milliseconds: 300));
-    return _user;
-  }
-
-  Future<UserModel> loginWithPhone(String phone) async {
-    await Future.delayed(const Duration(seconds: 1));
-    final user = UserModel(id: 'u_${DateTime.now().millisecondsSinceEpoch}', phone: phone, name: 'Foo Lover');
-    _user = user;
-    return user;
-  }
-
-  Future<void> logout() async {
-    await Future.delayed(const Duration(milliseconds: 200));
-    _user = null;
-  }
-
-  Future<bool> sendOtp(String phone) async {
+class AuthRepository {
+  // Fake login: accepts any email with "@" and password length >= 6
+  Future<void> login({required String email, required String password}) async {
     await Future.delayed(const Duration(milliseconds: 700));
-    return true;
+    if (!email.contains('@') || password.length < 6) {
+      throw AuthException('Invalid email or password');
+    }
+    // success - do nothing (no backend)
   }
 
-  Future<UserModel> verifyOtp(String phone, String code) async {
-    await Future.delayed(const Duration(seconds: 1));
-    final user = UserModel(id: 'u_${DateTime.now().millisecondsSinceEpoch}', phone: phone, name: 'FooDoko Fan');
-    _user = user;
-    return user;
+  // Fake signup: basic validation
+  Future<void> signup({
+    required String name,
+    required String email,
+    required String password,
+  }) async {
+    await Future.delayed(const Duration(milliseconds: 900));
+    if (name.trim().isEmpty) throw AuthException('Please provide a name');
+    if (!email.contains('@')) throw AuthException('Invalid email');
+    if (password.length < 6) throw AuthException('Password too short');
+    // success
   }
+
+  // Fake password reset
+  Future<void> sendPasswordReset({required String email}) async {
+    await Future.delayed(const Duration(milliseconds: 700));
+    if (!email.contains('@')) throw AuthException('Invalid email');
+    // success
+  }
+}
+
+class AuthException implements Exception {
+  final String message;
+  AuthException(this.message);
+  @override
+  String toString() => message;
 }
