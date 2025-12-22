@@ -1,12 +1,14 @@
-// Revolutionary Ultra Home Screen
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:badges/badges.dart' as badges;
+import 'dart:io';
 
 import '../../../app/config/app_colors.dart';
+import '../../../app/utils/responsive.dart';
 import '../../cart/providers/cart_providers.dart';
 import '../../ai/providers/ultra_ai_providers.dart';
 import '../../voice/widgets/voice_order_widget.dart';
@@ -113,7 +115,7 @@ class _UltraHomeScreenState extends ConsumerState<UltraHomeScreen> with TickerPr
                                     'FooDoko',
                                     style: GoogleFonts.poppins(
                                       color: Colors.white,
-                                      fontSize: 24,
+                                      fontSize: Responsive.getFontSize(context, 24),
                                       fontWeight: FontWeight.bold,
                                     ),
                                   ),
@@ -226,7 +228,7 @@ class _UltraHomeScreenState extends ConsumerState<UltraHomeScreen> with TickerPr
                   ),
                   const SizedBox(height: 12),
                   SizedBox(
-                    height: 180,
+                    height: Responsive.isMobile(context) ? 180 : 220,
                     child: ListView.builder(
                       scrollDirection: Axis.horizontal,
                       itemCount: 5,
@@ -239,7 +241,7 @@ class _UltraHomeScreenState extends ConsumerState<UltraHomeScreen> with TickerPr
                         return GestureDetector(
                           onTap: () => context.push('/restaurant/pizza_palace'),
                           child: Container(
-                          width: 240,
+                          width: Responsive.isMobile(context) ? 240 : 300,
                           margin: const EdgeInsets.only(right: 16),
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
@@ -458,12 +460,12 @@ class _UltraHomeScreenState extends ConsumerState<UltraHomeScreen> with TickerPr
                   ),
                   const SizedBox(height: 8),
                   GridView.count(
-                    crossAxisCount: 2,
+                    crossAxisCount: Responsive.getCrossAxisCount(context),
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     crossAxisSpacing: 12,
                     mainAxisSpacing: 12,
-                    childAspectRatio: 1.1,
+                    childAspectRatio: Responsive.isMobile(context) ? 1.1 : 1.3,
                     children: [
                       _buildFeatureCard('🎯 AI Predictor', 'Next order prediction', Colors.blue),
                       _buildFeatureCard('🥗 Nutrition AI', 'Smart calorie optimizer', Colors.green),

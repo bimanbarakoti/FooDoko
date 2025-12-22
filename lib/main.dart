@@ -1,5 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'dart:io';
+
 import 'app/router/app_router.dart';
 import 'app/config/app_themes.dart';
 import 'app/providers/theme_provider.dart';
@@ -11,9 +14,13 @@ import 'app/services/native_service.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  // Initialize services
-  await SpeechService.initialize();
-  await NativeService.optimizePerformance();
+  // Initialize services based on platform
+  if (!kIsWeb) {
+    await SpeechService.initialize();
+    if (Platform.isAndroid || Platform.isIOS) {
+      await NativeService.optimizePerformance();
+    }
+  }
   
   // Track app launch
   AnalyticsService.trackEvent('app_launch');
@@ -40,10 +47,12 @@ class _FoodokoAppState extends ConsumerState<FoodokoApp> {
   }
 
   Future<void> _requestPermissions() async {
-    // Request permissions silently without bothering user
-    await Future.delayed(const Duration(seconds: 1));
-    if (mounted) {
-      await PermissionService.requestAllPermissions(context);
+    // Request permissions only on mobile platforms
+    if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
+      await Future.delayed(const Duration(seconds: 1));
+      if (mounted) {
+        await PermissionService.requestAllPermissions(context);
+      }
     }
   }
 
@@ -59,35 +68,47 @@ class _FoodokoAppState extends ConsumerState<FoodokoApp> {
       darkTheme: AppThemes.darkTheme,
       themeMode: themeMode,
       builder: (context, child) {
-        // Global error handling
-        ErrorWidget.builder = (FlutterErrorDetails errorDetails) {
-          return Scaffold(
-            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-            body: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.error_outline,
-                    size: 64,
-                    color: Theme.of(context).colorScheme.error,
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'Something went wrong',
-                    style: Theme.of(context).textTheme.headlineSmall,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Please restart the app',
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                ],
-              ),
+        // Responsive design wrapper
+        return MediaQuery(
+          data: MediaQuery.of(context).copyWith(
+            textScaler: TextScaler.linear(
+              MediaQuery.of(context).size.width > 600 ? 1.2 : 1.0,
             ),
-          );
-        };
-        return child ?? const SizedBox.shrink();
+          ),
+          child: Builder(
+            builder: (context) {
+              // Global error handling
+              ErrorWidget.builder = (FlutterErrorDetails errorDetails) {
+                return Scaffold(
+                  backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                  body: Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.error_outline,
+                          size: 64,
+                          color: Theme.of(context).colorScheme.error,
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          'Something went wrong',
+                          style: Theme.of(context).textTheme.headlineSmall,
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Please restart the app',
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              };
+              return child ?? const SizedBox.shrink();
+            },
+          ),
+        );
       },
     );
   }
