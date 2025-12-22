@@ -2,7 +2,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:go_router/go_router.dart';
-import 'package:flutter/foundation.dart';
 
 class AppSearchDelegate extends SearchDelegate<String> {
   final List<dynamic> data; // expected: list of RestaurantModel (or objects with .name/.shortDesc/.id)

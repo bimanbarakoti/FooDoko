@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/address_provider.dart';
-import '../data/address_model.dart';
 import 'map_picker_screen.dart';
 
 class AddressManagerScreen extends ConsumerWidget {

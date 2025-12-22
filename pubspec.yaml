@@ -1,6 +1,6 @@
 name: foodoko
-description: A production-ready food discovery and ordering Flutter app
-version: 1.0.0+1
+description: Revolutionary AI-Powered Food Delivery - 100x Better Than Uber Eats
+version: 2.0.0+1
 publish_to: "none"
 
 environment:
@@ -10,44 +10,109 @@ dependencies:
   flutter:
     sdk: flutter
 
-  # State management
+  # State management & Architecture
   flutter_riverpod: ^2.5.1
+  json_annotation: ^4.9.0
 
-  # Navigation
-  go_router: ^6.5.0   # downgraded to match Flutter SDK
+  # Navigation & Routing
+  go_router: ^6.5.0
 
-  # UI & animations
+  # UI & Animations
   google_fonts: ^6.3.3
-  glassmorphism: ^3.0.0
+  flutter_animate: ^4.5.0
   lottie: ^2.3.0
+  flutter_staggered_grid_view: ^0.7.0
+  flutter_staggered_animations: ^1.1.1
+  shimmer: ^3.0.0
+  glassmorphism: ^3.0.0
   flutter_svg: ^2.0.7
+  cached_network_image: ^3.3.1
+  photo_view: ^0.15.0
+  carousel_slider: ^5.0.0
+  smooth_page_indicator: ^1.2.0
+  flutter_rating_bar: ^4.0.1
+  badges: ^3.1.2
+  flutter_slidable: ^3.1.1
+  pull_to_refresh: ^2.0.0
 
-  # Networking
-  dio: ^5.2.1   # compatible
+  # Networking & API
+  dio: ^5.2.1
   http: ^1.2.3
+  pretty_dio_logger: ^1.4.0
 
-  # Location & permissions
-  geolocator: ^14.0.1  # compatible
-  permission_handler: ^12.0.1
-
-  # Local storage
+  # Local Storage & Database
   shared_preferences: ^2.2.0
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+  sqflite: ^2.3.3
+  path_provider: ^2.1.4
+  flutter_secure_storage: ^9.2.2
 
-  # Misc
-  intl: ^0.18.1
-  flutter_local_notifications: ^19.5.0
-  khalti_flutter: ^3.0.0
-  uuid: ^4.5.2
-  google_maps_flutter: ^2.14.0
+  # Location & Maps
+  geolocator: ^14.0.1
   geocoding: ^4.0.0
-  state_notifier: ^1.0.0
-  sensors_plus: ^7.0.0
+  google_maps_flutter: ^2.14.0
+  maps_launcher: ^2.2.1
+  location: ^7.0.0
+
+  # Device Features & Permissions (minimal)
+  permission_handler: ^12.0.1
+  device_info_plus: ^11.5.0
+  package_info_plus: ^8.0.2
+  battery_plus: ^6.0.2
+  vibration: ^3.1.5
+  local_auth: ^2.3.0
+
+  # Camera & Media (optional)
+  image_picker: ^1.1.2
+  video_player: ^2.9.1
+
+  # Audio & Speech
+  speech_to_text: ^7.0.0
+  flutter_tts: ^4.1.0
+  audioplayers: ^6.1.0
+
+  # Notifications & Background
+  flutter_local_notifications: ^19.5.0
+  workmanager: ^0.5.2
+
+  # Social & Sharing
+  share_plus: ^10.0.2
   url_launcher: ^6.2.4
+
+  # QR & Barcode
+  qr_flutter: ^4.1.0
+  mobile_scanner: ^5.2.3
+
+  # Real-time & WebSocket
+  socket_io_client: ^2.0.3+1
+  web_socket_channel: ^3.0.1
+
+  # Utilities
+  intl: ^0.18.1
+  uuid: ^4.5.2
+  crypto: ^3.0.5
+  encrypt: ^5.0.3
+  equatable: ^2.0.5
+  dartz: ^0.10.1
+  rxdart: ^0.28.0
+  collection: ^1.18.0
+  mime: ^2.0.0
+  file_picker: ^8.1.2
+  open_file: ^3.5.7
+  path: ^1.9.0
+  logger: ^2.4.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^2.0.1
+  build_runner: ^2.4.13
+  freezed: ^2.5.7
+  json_serializable: ^6.8.0
+  riverpod_generator: ^2.4.3
+  retrofit_generator: ^9.1.2
+  drift_dev: ^2.20.1
 
 flutter:
   uses-material-design: true

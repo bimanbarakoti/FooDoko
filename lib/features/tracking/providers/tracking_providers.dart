@@ -1,10 +1,81 @@
-// lib/features/tracking/providers/tracking_providers.dart
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../data/mock_tracking_repository.dart';
+import '../services/ultra_live_tracking.dart';
 
-final trackingRepoProvider = Provider<MockTrackingRepository>((ref) => MockTrackingRepository());
+// Tracking State
+class TrackingState {
+  final Map<String, Map<String, dynamic>> activeOrders;
+  final Map<String, dynamic> deliveryInsights;
+  final Map<String, dynamic> predictiveAnalytics;
+  final bool isTracking;
 
-final trackingStreamProvider = StreamProvider<TrackingPoint>((ref) {
-  final repo = ref.watch(trackingRepoProvider);
-  return repo.simulateDriver();
+  TrackingState({
+    this.activeOrders = const {},
+    this.deliveryInsights = const {},
+    this.predictiveAnalytics = const {},
+    this.isTracking = false,
+  });
+
+  TrackingState copyWith({
+    Map<String, Map<String, dynamic>>? activeOrders,
+    Map<String, dynamic>? deliveryInsights,
+    Map<String, dynamic>? predictiveAnalytics,
+    bool? isTracking,
+  }) {
+    return TrackingState(
+      activeOrders: activeOrders ?? this.activeOrders,
+      deliveryInsights: deliveryInsights ?? this.deliveryInsights,
+      predictiveAnalytics: predictiveAnalytics ?? this.predictiveAnalytics,
+      isTracking: isTracking ?? this.isTracking,
+    );
+  }
+}
+
+class TrackingNotifier extends StateNotifier<TrackingState> {
+  TrackingNotifier() : super(TrackingState());
+
+  void startTracking(String orderId) {
+    state = state.copyWith(isTracking: true);
+    
+    UltraLiveTracking.trackOrderLive(orderId).listen((update) {
+      final updatedOrders = Map<String, Map<String, dynamic>>.from(state.activeOrders);
+      updatedOrders[orderId] = update;
+      
+      state = state.copyWith(activeOrders: updatedOrders);
+    });
+  }
+
+  void loadDeliveryInsights(String orderId) {
+    final insights = UltraLiveTracking.getDeliveryInsights(orderId);
+    state = state.copyWith(deliveryInsights: insights);
+  }
+
+  void loadPredictiveAnalytics() {
+    final analytics = UltraLiveTracking.getPredictiveAnalytics();
+    state = state.copyWith(predictiveAnalytics: analytics);
+  }
+
+  void stopTracking() {
+    state = state.copyWith(isTracking: false, activeOrders: {});
+  }
+}
+
+// Providers
+final trackingProvider = StateNotifierProvider<TrackingNotifier, TrackingState>((ref) {
+  return TrackingNotifier();
+});
+
+final orderTrackingProvider = Provider.family<Stream<Map<String, dynamic>>, String>((ref, orderId) {
+  return UltraLiveTracking.trackOrderLive(orderId);
+});
+
+final deliveryInsightsProvider = Provider.family<Map<String, dynamic>, String>((ref, orderId) {
+  return UltraLiveTracking.getDeliveryInsights(orderId);
+});
+
+final predictiveAnalyticsProvider = Provider<Map<String, dynamic>>((ref) {
+  return UltraLiveTracking.getPredictiveAnalytics();
+});
+
+final activeOrdersProvider = Provider<Map<String, Map<String, dynamic>>>((ref) {
+  return ref.watch(trackingProvider).activeOrders;
 });

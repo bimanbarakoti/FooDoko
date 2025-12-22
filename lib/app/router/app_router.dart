@@ -1,6 +1,5 @@
 // app_routes.dart
 import 'package:go_router/go_router.dart';
-import 'package:flutter/material.dart';
 
 // Auth Screens
 import '../../features/auth/views/login_screen.dart';
@@ -9,18 +8,26 @@ import '../../features/auth/views/forgot_password_screen.dart';
 import '../../features/auth/views/splash_screen.dart';
 
 // Other Screens
-import '../../features/home/views/home_screen.dart';
+import '../../features/home/views/ultra_home_screen.dart';
 import '../../features/restaurant/views/restaurant_screen.dart';
 import '../../features/cart/views/cart_screen.dart';
 import '../../features/cart/views/checkout_screen.dart';
 import '../../features/payment/views/payment_methods_screen.dart';
+import '../../features/live_tracking/views/live_tracking_screen.dart';
+import '../../features/onboarding/onboarding_screen.dart';
 
 import 'routes.dart';
 
 class AppRouter {
   static final GoRouter router = GoRouter(
-    initialLocation: AppRoutes.splash,
+    initialLocation: '/onboarding',
     routes: [
+
+      /// Onboarding
+      GoRoute(
+        path: '/onboarding',
+        builder: (context, state) => const OnboardingScreen(),
+      ),
 
       /// Splash
       GoRoute(
@@ -49,7 +56,7 @@ class AppRouter {
       /// Home
       GoRoute(
         path: AppRoutes.home,
-        builder: (context, state) => const HomeScreen(),
+        builder: (context, state) => const UltraHomeScreen(),
       ),
 
       /// Restaurant details
@@ -76,7 +83,16 @@ class AppRouter {
       /// Payment
       GoRoute(
         path: AppRoutes.payment,
-        builder: (context, state) => const PaymentMethodsScreen(),
+        builder: (context, state) {
+          final total = state.queryParams['total'];
+          return PaymentMethodsScreen(totalAmount: total);
+        },
+      ),
+
+      /// Live Tracking
+      GoRoute(
+        path: '/tracking',
+        builder: (context, state) => const LiveTrackingScreen(),
       ),
     ],
   );

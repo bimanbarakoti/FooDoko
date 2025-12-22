@@ -1,12 +1,11 @@
 // lib/features/payment/services/khalti_service.dart
-import 'package:khalti_flutter/khalti_flutter.dart';
 import 'package:flutter/material.dart';
 
 class KhaltiService {
   static const String publicKey = "test_public_key_dc74e0fd57cb46cd93832aee0a507256";
   
   static Future<void> initializeKhalti() async {
-    // Khalti initialization is handled by KhaltiScope in main.dart
+    // Mock initialization
   }
 
   static Future<void> makePayment({
@@ -14,41 +13,49 @@ class KhaltiService {
     required double amount,
     required String productName,
     required String productId,
-    required Function(PaymentSuccessModel) onSuccess,
-    required Function(PaymentFailureModel) onFailure,
+    required Function(Map<String, dynamic>) onSuccess,
+    required Function(String) onFailure,
     required Function() onCancel,
   }) async {
     try {
-      final config = PaymentConfig(
-        amount: (amount * 100).toInt(), // Convert to paisa
-        productIdentity: productId,
-        productName: productName,
-        productUrl: 'https://foodoko.com/product/$productId',
-        additionalData: {
-          'vendor': 'FooDoko',
-          'platform': 'mobile',
-        },
+      // Show mock payment dialog
+      final result = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Khalti Payment'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('Amount: Rs. ${(amount * 100).toInt()}'),
+              Text('Product: $productName'),
+              const SizedBox(height: 16),
+              const Text('This is a demo payment. Click Pay to simulate success.'),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('Pay'),
+            ),
+          ],
+        ),
       );
 
-      KhaltiScope.of(context).pay(
-        config: config,
-        preferences: [
-          PaymentPreference.khalti,
-          PaymentPreference.eBanking,
-          PaymentPreference.mobileBanking,
-          PaymentPreference.connectIPS,
-          PaymentPreference.sct,
-        ],
-        onSuccess: onSuccess,
-        onFailure: onFailure,
-        onCancel: onCancel,
-      );
+      if (result == true) {
+        // Simulate successful payment
+        onSuccess({
+          'token': 'demo_token_${DateTime.now().millisecondsSinceEpoch}',
+          'amount': (amount * 100).toInt(),
+        });
+      } else {
+        onCancel();
+      }
     } catch (e) {
-      debugPrint('Khalti Payment Error: $e');
-      onFailure(PaymentFailureModel(
-        data: {},
-        message: 'Payment initialization failed: $e',
-      ));
+      onFailure('Payment failed: $e');
     }
   }
 
@@ -56,14 +63,7 @@ class KhaltiService {
     required String token,
     required double amount,
   }) async {
-    try {
-      // In a real app, you would verify the payment on your backend
-      // This is just a mock verification
-      await Future.delayed(const Duration(seconds: 2));
-      return true;
-    } catch (e) {
-      debugPrint('Payment verification failed: $e');
-      return false;
-    }
+    await Future.delayed(const Duration(seconds: 1));
+    return true;
   }
 }

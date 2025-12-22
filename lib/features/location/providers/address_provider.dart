@@ -1,9 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../data/address_model.dart';
 import 'package:uuid/uuid.dart';
-import 'package:state_notifier/state_notifier.dart';
-
-
 
 final savedAddressesProvider =
 StateNotifierProvider<AddressController, List<AddressModel>>((ref) {

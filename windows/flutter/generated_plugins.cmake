@@ -3,8 +3,17 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  audioplayers_windows
+  battery_plus
+  file_selector_windows
+  flutter_secure_storage_windows
+  flutter_tts
   geolocator_windows
+  local_auth_windows
+  maps_launcher
   permission_handler_windows
+  share_plus
+  speech_to_text_windows
   url_launcher_windows
 )
 
