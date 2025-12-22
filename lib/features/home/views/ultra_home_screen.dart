@@ -295,56 +295,65 @@ class _UltraHomeScreenState extends ConsumerState<UltraHomeScreen> with TickerPr
                               ),
                               Expanded(
                                 child: Padding(
-                                  padding: const EdgeInsets.all(16),
+                                  padding: const EdgeInsets.all(12),
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      Text(
-                                        rec['name'],
-                                        style: GoogleFonts.poppins(
-                                          fontWeight: FontWeight.w600,
-                                          color: Theme.of(context).textTheme.titleMedium?.color,
+                                      Flexible(
+                                        child: Text(
+                                          rec['name'],
+                                          style: GoogleFonts.poppins(
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 14,
+                                            color: Theme.of(context).textTheme.titleMedium?.color,
+                                          ),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
                                         ),
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
                                       ),
                                       const SizedBox(height: 4),
-                                      Text(
-                                        rec['reason'],
-                                        style: GoogleFonts.inter(
-                                          fontSize: 12,
-                                          color: AppColors.electricGreen,
+                                      Flexible(
+                                        child: Text(
+                                          rec['reason'],
+                                          style: GoogleFonts.inter(
+                                            fontSize: 11,
+                                            color: AppColors.electricGreen,
+                                          ),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
                                         ),
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
                                       ),
                                       const Spacer(),
                                       Row(
                                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                         children: [
-                                          Text(
-                                            '\$${rec['price']}',
-                                            style: GoogleFonts.poppins(
-                                              fontWeight: FontWeight.bold,
-                                              color: Theme.of(context).textTheme.titleMedium?.color,
+                                          Flexible(
+                                            child: Text(
+                                              '\$${rec['price']}',
+                                              style: GoogleFonts.poppins(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 14,
+                                                color: Theme.of(context).textTheme.titleMedium?.color,
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
                                             ),
                                           ),
-                                          Flexible(
-                                            child: Container(
-                                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                              decoration: BoxDecoration(
-                                                gradient: LinearGradient(
-                                                  colors: [AppColors.electricGreen, Colors.blue],
-                                                ),
-                                                borderRadius: BorderRadius.circular(8),
+                                          const SizedBox(width: 8),
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                            decoration: BoxDecoration(
+                                              gradient: LinearGradient(
+                                                colors: [AppColors.electricGreen, Colors.blue],
                                               ),
-                                              child: Text(
-                                                '${(rec['confidence'] * 100).toInt()}%',
-                                                style: GoogleFonts.inter(
-                                                  fontSize: 9,
-                                                  color: Colors.white,
-                                                  fontWeight: FontWeight.w600,
-                                                ),
+                                              borderRadius: BorderRadius.circular(8),
+                                            ),
+                                            child: Text(
+                                              '${(rec['confidence'] * 100).toInt()}%',
+                                              style: GoogleFonts.inter(
+                                                fontSize: 9,
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.w600,
                                               ),
                                             ),
                                           ),
@@ -393,9 +402,9 @@ class _UltraHomeScreenState extends ConsumerState<UltraHomeScreen> with TickerPr
                         final food = weatherFoods[index % weatherFoods.length];
                         
                         return Container(
-                          width: 160,
+                          width: 140,
                           margin: const EdgeInsets.only(right: 12),
-                          padding: const EdgeInsets.all(12),
+                          padding: const EdgeInsets.all(10),
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
                               colors: [Colors.orange.withValues(alpha: 0.1), Colors.red.withValues(alpha: 0.1)],
@@ -404,22 +413,29 @@ class _UltraHomeScreenState extends ConsumerState<UltraHomeScreen> with TickerPr
                           ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
                             children: [
-                              Text(
-                                food['name'],
-                                style: GoogleFonts.poppins(
-                                  fontWeight: FontWeight.w600,
-                                  color: Theme.of(context).textTheme.titleMedium?.color,
+                              Flexible(
+                                child: Text(
+                                  food['name'],
+                                  style: GoogleFonts.poppins(
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 13,
+                                    color: Theme.of(context).textTheme.titleMedium?.color,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
                               ),
                               const SizedBox(height: 4),
-                              Text(
-                                '${food['weatherMatch']}% Match',
-                                style: GoogleFonts.inter(
-                                  fontSize: 12,
-                                  color: Colors.orange,
+                              Flexible(
+                                child: Text(
+                                  '${food['weatherMatch']}% Match',
+                                  style: GoogleFonts.inter(
+                                    fontSize: 11,
+                                    color: Colors.orange,
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
                                 ),
                               ),
                               const Spacer(),
@@ -427,8 +443,10 @@ class _UltraHomeScreenState extends ConsumerState<UltraHomeScreen> with TickerPr
                                 '\$${food['price']}',
                                 style: GoogleFonts.poppins(
                                   fontWeight: FontWeight.bold,
+                                  fontSize: 13,
                                   color: Theme.of(context).textTheme.titleMedium?.color,
                                 ),
+                                overflow: TextOverflow.ellipsis,
                               ),
                             ],
                           ),
