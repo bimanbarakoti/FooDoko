@@ -10,9 +10,13 @@ import 'app/services/permission_service.dart';
 import 'app/services/speech_service.dart';
 import 'app/services/analytics_service.dart';
 import 'app/services/native_service.dart';
+import 'app/services/assembly_debugger.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // Initialize assembly debugger first
+  await AssemblyDebugger.initialize();
   
   // Initialize services based on platform
   if (!kIsWeb) {
@@ -24,6 +28,14 @@ void main() async {
   
   // Track app launch
   AnalyticsService.trackEvent('app_launch');
+  
+  // Global error handling
+  FlutterError.onError = (FlutterErrorDetails details) {
+    AssemblyDebugger.handleCrash(
+      details.exception.toString(),
+      details.stack ?? StackTrace.current,
+    );
+  };
   
   runApp(
     const ProviderScope(
