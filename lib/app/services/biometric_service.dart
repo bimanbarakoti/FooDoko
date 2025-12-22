@@ -1,4 +1,5 @@
 // lib/app/services/biometric_service.dart
+import 'package:flutter/foundation.dart';
 import 'package:local_auth/local_auth.dart';
 import 'package:flutter/services.dart';
 
@@ -43,10 +44,14 @@ class BiometricService {
 
       return isAuthenticated;
     } on PlatformException catch (e) {
-      print('Biometric authentication error: ${e.message}');
+      if (kDebugMode) {
+        debugPrint('Biometric authentication error: ${e.message}');
+      }
       return false;
     } catch (e) {
-      print('Unexpected biometric error: $e');
+      if (kDebugMode) {
+        debugPrint('Unexpected biometric error: $e');
+      }
       return false;
     }
   }
@@ -79,8 +84,6 @@ class BiometricService {
         return 'Strong Biometric';
       case BiometricType.weak:
         return 'Weak Biometric';
-      default:
-        return 'Biometric';
     }
   }
 }

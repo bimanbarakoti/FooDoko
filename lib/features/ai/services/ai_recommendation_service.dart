@@ -12,6 +12,10 @@ class AIRecommendationService {
     final preferences = _userPreferences[userId] ?? [];
     final behavior = _userBehavior.where((b) => b['userId'] == userId).toList();
     
+    // Use preferences and behavior for recommendations
+    final confidence = hasItalianPreference ? 0.95 : 0.88;
+    final orderBonus = recentOrders > 5 ? 0.05 : 0.0;
+    
     // Simulate AI recommendation algorithm
     final recommendations = [
       {
@@ -86,7 +90,7 @@ class AIRecommendationService {
     }
 
     if (kDebugMode) {
-      print('🤖 AI Learning: $action for user $userId');
+      debugPrint('🤖 AI Learning: $action for user $userId');
     }
   }
 
@@ -105,5 +109,9 @@ class AIRecommendationService {
         'Weather conditions: Clear',
       ],
     };
+  }
+
+  static void updateItemRating(String itemId, double rating) {
+    _itemRatings[itemId] = rating;
   }
 }
