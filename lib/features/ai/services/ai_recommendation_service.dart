@@ -13,8 +13,13 @@ class AIRecommendationService {
     final behavior = _userBehavior.where((b) => b['userId'] == userId).toList();
     
     // Use preferences and behavior for recommendations
+    final hasItalianPreference = preferences.contains('Italian');
+    final recentOrders = behavior.length;
     final confidence = hasItalianPreference ? 0.95 : 0.88;
     final orderBonus = recentOrders > 5 ? 0.05 : 0.0;
+    
+    // Apply confidence and bonus to recommendations
+    final finalConfidence = confidence + orderBonus;
     
     // Simulate AI recommendation algorithm
     final recommendations = [
@@ -23,7 +28,7 @@ class AIRecommendationService {
         'name': 'AI Recommended: Truffle Pasta',
         'description': 'Based on your love for Italian cuisine',
         'price': 24.99,
-        'confidence': 0.95,
+        'confidence': finalConfidence,
         'reason': 'You ordered pasta 5 times this month',
         'imageUrl': 'https://images.unsplash.com/photo-1621996346565-e3dbc353d2e5?w=300&h=200&fit=crop',
         'restaurant': 'AI Chef Kitchen',

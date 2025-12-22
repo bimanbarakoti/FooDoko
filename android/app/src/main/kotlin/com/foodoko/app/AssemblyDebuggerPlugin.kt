@@ -5,7 +5,6 @@ import android.os.Debug
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
-import java.lang.management.ManagementFactory
 
 class AssemblyDebuggerPlugin(private val context: Context) : MethodChannel.MethodCallHandler {
     

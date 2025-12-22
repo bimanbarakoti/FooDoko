@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../app/config/app_colors.dart';
 import '../providers/tracking_providers.dart';
-import '../services/ultra_live_tracking.dart';
 
 class OrderTrackingScreen extends ConsumerStatefulWidget {
   final String orderId;

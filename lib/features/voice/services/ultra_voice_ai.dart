@@ -112,6 +112,8 @@ class UltraVoiceAI {
     );
   }
 
+  static bool get isListening => _isListening;
+
   static Future<void> speakWithPersonality(String text) async {
     final personalizedText = "Hey there! $text Let me know if you need anything else!";
     await _tts.speak(personalizedText);

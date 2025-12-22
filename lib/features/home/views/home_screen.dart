@@ -567,43 +567,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> with TickerProviderStat
     );
   }
 
-  Widget _promoBanner() {
-    return Container(
-      height: 120,
-      clipBehavior: Clip.hardEdge,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        gradient: AppColors.primaryGradient,
-      ),
-      child: Stack(
-        children: [
-          // subtle overlay
-          Positioned.fill(child: Container(color: Colors.black.withOpacity(0.08))),
-          Positioned(
-            left: 18,
-            top: 18,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('🔥 20% OFF on Pizza Tonight', style: GoogleFonts.poppins(fontSize: 18, color: Colors.black, fontWeight: FontWeight.w700)),
-                const SizedBox(height: 6),
-                Text('Use code PIZZA20 • Valid today', style: GoogleFonts.inter(color: Colors.black87)),
-                const SizedBox(height: 8),
-                SizedBox(
-                  height: 36,
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(backgroundColor: Colors.white, shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
-                    child: Text('Grab Offer', style: GoogleFonts.poppins(color: AppColors.electricGreen)),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+
 
   Widget _restaurantCard(BuildContext context, dynamic r) {
     // r should be your RestaurantModel

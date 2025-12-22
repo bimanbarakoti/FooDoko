@@ -21,8 +21,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> with TickerProv
   late AnimationController _pulseController;
   
   String _selectedPaymentMethod = 'card';
-  String _deliveryAddress = '123 Main St, City, State 12345';
-  String _deliveryInstructions = '';
+  final String _deliveryAddress = '123 Main St, City, State 12345';
   bool _isProcessing = false;
 
   @override
@@ -282,7 +281,9 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> with TickerProv
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: TextField(
-                  onChanged: (value) => _deliveryInstructions = value,
+                  onChanged: (value) {
+                    // Store delivery instructions
+                  },
                   decoration: InputDecoration(
                     hintText: 'Add delivery instructions (optional)',
                     hintStyle: GoogleFonts.inter(color: Colors.grey),

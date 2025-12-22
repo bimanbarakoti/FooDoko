@@ -14,6 +14,7 @@ class ARFoodService {
       'nutritionOverlay': true,
       'sizeComparison': 'Real-world scale',
       'confidence': 99.8,
+      'arEnabled': _isAREnabled,
     };
   }
 

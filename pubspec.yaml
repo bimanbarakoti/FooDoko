@@ -52,7 +52,6 @@ dependencies:
   geolocator: ^14.0.1
   geocoding: ^4.0.0
   google_maps_flutter: ^2.14.0
-  maps_launcher: ^2.2.1
   location: ^7.0.0
 
   # Device Features & Permissions (minimal)
@@ -72,9 +71,8 @@ dependencies:
   flutter_tts: ^4.1.0
   audioplayers: ^6.1.0
 
-  # Notifications & Background
+  # Notifications
   flutter_local_notifications: ^19.5.0
-  workmanager: ^0.5.2
 
   # Social & Sharing
   share_plus: ^10.0.2
